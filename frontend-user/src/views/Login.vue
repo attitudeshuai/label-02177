@@ -129,7 +129,7 @@ async function handleLogin() {
 
 .login-card {
   width: 100%;
-  max-width: 420px;
+  width: 420px;
 }
 
 .login-header {

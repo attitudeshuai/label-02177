@@ -168,7 +168,7 @@ async function handleRegister() {
 
 .register-card {
   width: 100%;
-  max-width: 420px;
+  width: 420px;
 }
 
 .register-header {
@@ -194,7 +194,10 @@ async function handleRegister() {
 }
 
 .register-footer {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   margin-top: 24px;
   font-size: 14px;
   color: #909399;
