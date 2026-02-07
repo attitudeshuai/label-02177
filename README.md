@@ -1,93 +1,120 @@
-# label-02177
+# 图书购物商城
 
+## How to Run
 
+### Docker 方式
 
-## Getting started
+```bash
+# 使用 Docker Compose 启动
+docker-compose up -d --build
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.jzxhnh.com/prompt2repo/label-02177.git
-git branch -M main
-git push -uf origin main
+# 访问地址
+http://localhost:8081
 ```
 
-## Integrate with your tools
+### 本地开发
 
-* [Set up project integrations](https://gitlab.jzxhnh.com/prompt2repo/label-02177/-/settings/integrations)
+```bash
+# 进入项目目录
+cd frontend-user
 
-## Collaborate with your team
+# 安装依赖
+npm install
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+# 启动开发服务器
+npm run dev
 
-## Test and Deploy
+# 访问地址
+http://localhost:5173
+```
 
-Use the built-in continuous integration in GitLab.
+## Services
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+| 服务名称 | 端口 | 说明 |
+|---------|------|------|
+| frontend-user | 8081 | 图书商城用户端 |
 
-***
+## 测试账号
 
-# Editing this README
+| 用户名 | 密码 | 说明 |
+|--------|------|------|
+| admin | 123456 | 测试账号 |
+| user | 123456 | 普通用户 |
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## 题目内容
 
-## Suggestions for a good README
+给我写一个简单的vue图书购物商城。
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+---
 
-## Name
-Choose a self-explaining name for your project.
+## 项目介绍
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+这是一个基于 Vue 3 + Vite + Element Plus + Pinia 构建的图书购物商城前端项目。
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### ⚠️ Mock 数据说明
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+本项目为前端演示项目，**未接入真实后端服务**，以下功能使用 Mock/本地存储模拟实现：
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+| 功能模块 | Mock 实现方式 | 说明 |
+|---------|-------------|------|
+| 用户认证 | localStorage | 用户数据存储在浏览器本地，支持注册新用户 |
+| 图书数据 | Pinia Store | 静态图书数据，存储在前端状态管理中 |
+| 购物车 | localStorage | 购物车数据持久化到本地存储 |
+| 订单管理 | localStorage | 订单数据持久化到本地存储 |
+| 支付二维码 | 模拟生成 | 二维码内容为模拟的微信支付链接，扫码无实际支付功能，点击"支付完成"按钮模拟支付成功 |
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+**生产环境部署时，需要将 Mock 实现替换为真实的后端 API 调用。**
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### 技术栈
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- Vue 3 - 渐进式 JavaScript 框架
+- Vite - 下一代前端构建工具
+- Element Plus - Vue 3 UI 组件库
+- Pinia - Vue 状态管理
+- Vue Router - 路由管理
+- Scss - CSS 预处理器
+- Axios - HTTP 请求库
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### 功能模块
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+1. **首页** - 展示图书列表、搜索、分类筛选
+2. **图书管理** - 图书列表、搜索、分类筛选
+3. **购物车** - 添加/删除商品、修改数量、结算
+4. **订单管理** - 订单列表、支付、取消订单
+5. **用户认证** - 登录、注册
+6. **个人中心** - 个人信息管理、修改密码
+7. **图书详情** - 查看图书详细信息
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### 项目结构
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```
+├── README.md                 # 项目说明文档
+├── docker-compose.yml        # Docker Compose 配置
+├── .gitignore                # Git 忽略文件
+└── frontend-user/            # 用户端项目
+    ├── Dockerfile            # Docker 构建文件
+    ├── nginx.conf            # Nginx 配置
+    ├── package.json          # 项目依赖
+    ├── vite.config.js        # Vite 配置
+    ├── index.html            # HTML 入口
+    ├── public/               # 静态资源
+    └── src/
+        ├── main.js           # 入口文件
+        ├── App.vue           # 根组件
+        ├── api/              # API 接口
+        ├── router/           # 路由配置
+        ├── stores/           # Pinia 状态管理
+        ├── styles/           # 全局样式
+        ├── components/       # 公共组件
+        ├── utils/            # 工具函数
+        └── views/            # 页面组件
+            ├── Home.vue      # 首页
+            ├── Books.vue     # 图书列表
+            ├── BookDetail.vue# 图书详情
+            ├── Cart.vue      # 购物车
+            ├── Checkout.vue  # 结算页
+            ├── Orders.vue    # 订单列表
+            ├── Profile.vue   # 个人中心
+            ├── Login.vue     # 登录页
+            └── Register.vue  # 注册页
+```
