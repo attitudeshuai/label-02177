@@ -6,7 +6,7 @@
       <div class="profile-card card">
         <div class="profile-header">
           <div class="profile-info">
-            <h3>你好，{{ userStore.userInfo?.nickname }}</h3>
+            <h3>你好，{{ userStore.userInfo?.username }}</h3>
           </div>
         </div>
         
@@ -21,9 +21,6 @@
             >
               <el-form-item label="用户名">
                 <el-input :value="userStore.userInfo?.username" disabled />
-              </el-form-item>
-              <el-form-item label="昵称" prop="nickname">
-                <el-input v-model="infoForm.nickname" placeholder="请输入昵称" />
               </el-form-item>
               <el-form-item label="手机号" prop="phone">
                 <el-input v-model="infoForm.phone" placeholder="请输入手机号" />
@@ -101,7 +98,6 @@ const infoLoading = ref(false)
 const pwdLoading = ref(false)
 
 const infoForm = reactive({
-  nickname: '',
   phone: '',
   email: ''
 })
@@ -113,9 +109,6 @@ const pwdForm = reactive({
 })
 
 const infoRules = {
-  nickname: [
-    { required: true, message: '请输入昵称', trigger: 'change' }
-  ],
   phone: [
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'change' }
   ],
@@ -178,7 +171,6 @@ onMounted(() => {
   }
   
   // 初始化表单数据
-  infoForm.nickname = userStore.userInfo?.nickname || ''
   infoForm.phone = userStore.userInfo?.phone || ''
   infoForm.email = userStore.userInfo?.email || ''
 })
@@ -193,7 +185,6 @@ async function handleUpdateInfo() {
     await new Promise(resolve => setTimeout(resolve, 500))
     
     const result = userStore.updateProfile({
-      nickname: infoForm.nickname,
       phone: infoForm.phone,
       email: infoForm.email
     })

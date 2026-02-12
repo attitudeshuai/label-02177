@@ -3,7 +3,9 @@
     <div class="header-content">
       <div class="header-left">
         <div class="logo" @click="router.push('/')">
-          <el-icon :size="28" color="#409eff"><Reading /></el-icon>
+          <div class="logo-icon">
+            <el-icon :size="24" color="#fff"><Reading /></el-icon>
+          </div>
           <span class="logo-text">图书商城</span>
         </div>
         
@@ -40,23 +42,32 @@
         
         <div class="header-actions">
           <el-badge :value="cartStore.totalCount" :hidden="cartStore.totalCount === 0" class="cart-badge">
-            <el-button :icon="ShoppingCart" @click="router.push('/cart')">
-              购物车
+            <el-button class="cart-btn" @click="router.push('/cart')">
+              <el-icon :size="18"><ShoppingCart /></el-icon>
+              <span>购物车</span>
             </el-button>
           </el-badge>
           
           <template v-if="userStore.isLoggedIn">
             <el-dropdown @command="handleCommand">
-              <span class="user-info">
-                <el-icon><User /></el-icon>
-                {{ userStore.userInfo?.nickname }}
+              <div class="user-info">
+                <span class="user-name">{{ userStore.userInfo?.username }}</span>
                 <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-              </span>
+              </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="profile">个人中心</el-dropdown-item>
-                  <el-dropdown-item command="orders">我的订单</el-dropdown-item>
-                  <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                  <el-dropdown-item command="profile">
+                    <el-icon><User /></el-icon>
+                    个人中心
+                  </el-dropdown-item>
+                  <el-dropdown-item command="orders">
+                    <el-icon><List /></el-icon>
+                    我的订单
+                  </el-dropdown-item>
+                  <el-dropdown-item divided command="logout">
+                    <el-icon><SwitchButton /></el-icon>
+                    退出登录
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -70,7 +81,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Search, ShoppingCart, User, ArrowDown, Reading } from '@element-plus/icons-vue'
+import { Search, ShoppingCart, User, ArrowDown, Reading, List, SwitchButton } from '@element-plus/icons-vue'
 import { useCartStore } from '@/stores/cart'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
@@ -113,7 +124,7 @@ function handleCommand(command) {
 <style lang="scss" scoped>
 .app-header {
   background: #fff;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -126,26 +137,40 @@ function handleCommand(command) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
+  height: 64px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 32px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   flex-shrink: 0;
   
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #409eff 0%, #2563eb 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
+  }
+  
   .logo-text {
     font-size: 20px;
-    font-weight: 600;
-    color: #303133;
+    font-weight: 700;
+    background: linear-gradient(135deg, #409eff 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 
@@ -154,19 +179,40 @@ function handleCommand(command) {
   
   :deep(.el-menu-item),
   :deep(.el-sub-menu__title) {
-    height: 60px;
-    line-height: 60px;
+    height: 64px;
+    line-height: 64px;
+    font-size: 15px;
+    
+    &:hover {
+      color: #409eff;
+      background: transparent;
+    }
+  }
+  
+  :deep(.el-menu-item.is-active) {
+    font-weight: 600;
   }
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .search-box {
-  width: 280px;
+  width: 260px;
+  
+  :deep(.el-input__wrapper) {
+    border-radius: 20px;
+    background: #f4f4f5;
+    box-shadow: none;
+    
+    &:hover, &.is-focus {
+      background: #fff;
+      box-shadow: 0 0 0 1px #409eff;
+    }
+  }
 }
 
 .header-actions {
@@ -176,22 +222,47 @@ function handleCommand(command) {
   flex-shrink: 0;
 }
 
+.cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 20px;
+  padding: 8px 16px;
+  border: 1px solid #e4e7ed;
+  background: #fff;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #409eff;
+    color: #409eff;
+    background: #ecf5ff;
+  }
+}
+
 .cart-badge {
   :deep(.el-badge__content) {
-    top: 8px;
-    right: 14px;
+    top: 6px;
+    right: 10px;
   }
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
-  color: #606266;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
   
   &:hover {
-    color: #409eff;
+    background: #f4f4f5;
+  }
+  
+  .user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #303133;
   }
 }
 </style>

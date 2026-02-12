@@ -9,20 +9,31 @@
         </template>
       </el-image>
       <div class="book-tag" v-if="discount > 0">
-        {{ discount }}折
+        <span class="discount-num">{{ discount }}</span>折
+      </div>
+      <div class="book-overlay">
+        <el-button type="primary" round :icon="View" size="small">查看详情</el-button>
       </div>
     </div>
     
     <div class="book-info">
       <h3 class="book-title" :title="book.title">{{ book.title }}</h3>
-      <p class="book-author">{{ book.author }}</p>
-      <div class="book-price">
-        <span class="current-price">¥{{ book.price.toFixed(2) }}</span>
-        <span class="original-price" v-if="book.originalPrice > book.price">
-          ¥{{ book.originalPrice.toFixed(2) }}
-        </span>
+      <p class="book-author">
+        <el-icon :size="14"><User /></el-icon>
+        {{ book.author }}
+      </p>
+      <div class="book-meta">
+        <div class="book-price">
+          <span class="current-price">¥{{ book.price.toFixed(2) }}</span>
+          <span class="original-price" v-if="book.originalPrice > book.price">
+            ¥{{ book.originalPrice.toFixed(2) }}
+          </span>
+        </div>
+        <div class="book-sales">
+          <el-icon :size="12"><Sell /></el-icon>
+          {{ book.sales }}
+        </div>
       </div>
-      <div class="book-sales">已售 {{ book.sales }} 本</div>
     </div>
     
     <div class="book-actions">
@@ -41,7 +52,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ShoppingCart, Picture } from '@element-plus/icons-vue'
+import { ShoppingCart, Picture, User, Sell, View } from '@element-plus/icons-vue'
 import { useCartStore } from '@/stores/cart'
 import { ElMessage } from 'element-plus'
 
@@ -82,8 +93,8 @@ async function handleAddToCart() {
 <style lang="scss" scoped>
 .book-card {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -91,19 +102,29 @@ async function handleAddToCart() {
   flex-direction: column;
   
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    
+    .book-overlay {
+      opacity: 1;
+    }
+    
+    .book-cover .el-image {
+      transform: scale(1.05);
+    }
   }
 }
 
 .book-cover {
   position: relative;
-  height: 200px;
-  background: #f5f7fa;
+  height: 220px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7ed 100%);
+  overflow: hidden;
   
   .el-image {
     width: 100%;
     height: 100%;
+    transition: transform 0.5s ease;
   }
   
   .image-error {
@@ -112,20 +133,37 @@ async function handleAddToCart() {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f7fa;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e7ed 100%);
     color: #c0c4cc;
   }
   
   .book-tag {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #f56c6c;
+    top: 12px;
+    left: 0;
+    background: linear-gradient(135deg, #f56c6c 0%, #e74c3c 100%);
     color: #fff;
-    padding: 2px 8px;
-    border-radius: 4px;
+    padding: 4px 12px 4px 8px;
+    border-radius: 0 20px 20px 0;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(245, 108, 108, 0.4);
+    
+    .discount-num {
+      font-weight: 700;
+      font-size: 14px;
+    }
+  }
+  
+  .book-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 }
 
@@ -135,30 +173,39 @@ async function handleAddToCart() {
 }
 
 .book-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #303133;
+  color: #1f2937;
   margin-bottom: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.4;
 }
 
 .book-author {
   font-size: 13px;
-  color: #909399;
-  margin-bottom: 8px;
+  color: #6b7280;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.book-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .book-price {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-bottom: 4px;
   
   .current-price {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     color: #f56c6c;
   }
   
@@ -171,7 +218,13 @@ async function handleAddToCart() {
 
 .book-sales {
   font-size: 12px;
-  color: #909399;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f4f4f5;
+  padding: 4px 8px;
+  border-radius: 10px;
 }
 
 .book-actions {
@@ -179,6 +232,8 @@ async function handleAddToCart() {
   
   .el-button {
     width: 100%;
+    border-radius: 8px;
+    font-weight: 500;
   }
 }
 </style>
