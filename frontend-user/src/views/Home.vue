@@ -14,19 +14,39 @@
     </div>
     
     <!-- 分类筛选 -->
-    <div class="category-section">
-      <div class="category-header">
-        <el-icon :size="20" color="#409eff"><Grid /></el-icon>
-        <span class="category-title">图书分类</span>
-      </div>
-      <div class="category-list">
-        <div
-          v-for="cat in bookStore.categories"
-          :key="cat"
-          :class="['category-item', { active: activeCategory === cat }]"
-          @click="handleCategoryChange(cat)"
-        >
-          {{ cat }}
+    <div class="filter-section">
+      <div class="filter-row">
+        <div class="filter-group">
+          <div class="filter-label">
+            <el-icon :size="18" color="#409eff"><Grid /></el-icon>
+            <span>图书分类</span>
+          </div>
+          <div class="filter-options">
+            <div
+              v-for="cat in bookStore.categories"
+              :key="cat"
+              :class="['filter-tag', { active: activeCategory === cat }]"
+              @click="handleCategoryChange(cat)"
+            >
+              {{ cat }}
+            </div>
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">
+            <el-icon :size="18" color="#409eff"><Coin /></el-icon>
+            <span>价格区间</span>
+          </div>
+          <div class="filter-options">
+            <div
+              v-for="opt in priceRanges"
+              :key="opt.value"
+              :class="['filter-tag', { active: activePriceRange === opt.value }]"
+              @click="activePriceRange = opt.value"
+            >
+              {{ opt.label }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -46,6 +66,7 @@
           <el-option label="价格从低到高" value="price-asc" />
           <el-option label="价格从高到低" value="price-desc" />
           <el-option label="销量优先" value="sales" />
+          <el-option label="评分从高到低" value="rating" />
         </el-select>
       </div>
       
@@ -65,7 +86,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Grid } from '@element-plus/icons-vue'
+import { Grid, Coin } from '@element-plus/icons-vue'
 import { useBookStore } from '@/stores/book'
 import BookCard from '@/components/BookCard.vue'
 
@@ -74,12 +95,27 @@ const bookStore = useBookStore()
 
 const activeCategory = ref('全部')
 const sortBy = ref('default')
+const activePriceRange = ref('all')
+
+const priceRanges = [
+  { label: '全部', value: 'all' },
+  { label: '50元以下', value: '0-50' },
+  { label: '50-100元', value: '50-100' },
+  { label: '100元以上', value: '100-' }
+]
+
+const searchKeyword = ref('')
+let debounceTimer = null
+
+watch(() => route.query.keyword, (val) => {
+  activeCategory.value = '全部'
+  searchKeyword.value = val || ''
+}, { immediate: true })
 
 const filteredBooks = computed(() => {
   let books = bookStore.getBooksByCategory(activeCategory.value)
   
-  // 搜索过滤
-  const keyword = route.query.keyword
+  const keyword = searchKeyword.value
   if (keyword) {
     const lowerKeyword = keyword.toLowerCase()
     books = books.filter(
@@ -87,6 +123,18 @@ const filteredBooks = computed(() => {
         book.title.toLowerCase().includes(lowerKeyword) ||
         book.author.toLowerCase().includes(lowerKeyword)
     )
+  }
+  
+  if (activePriceRange.value !== 'all') {
+    const parts = activePriceRange.value.split('-')
+    const min = Number(parts[0])
+    const maxStr = parts[1]
+    books = books.filter(book => {
+      if (maxStr) {
+        return book.price >= min && book.price <= Number(maxStr)
+      }
+      return book.price >= min
+    })
   }
   
   return books
@@ -102,6 +150,8 @@ const sortedBooks = computed(() => {
       return books.sort((a, b) => b.price - a.price)
     case 'sales':
       return books.sort((a, b) => b.sales - a.sales)
+    case 'rating':
+      return books.sort((a, b) => b.rating - a.rating)
     default:
       return books
   }
@@ -110,10 +160,6 @@ const sortedBooks = computed(() => {
 function handleCategoryChange(category) {
   activeCategory.value = category
 }
-
-watch(() => route.query.keyword, () => {
-  activeCategory.value = '全部'
-})
 </script>
 
 <style lang="scss" scoped>
@@ -184,38 +230,48 @@ watch(() => route.query.keyword, () => {
   }
 }
 
-.category-section {
+.filter-section {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 20px 24px;
   display: flex;
-  align-items: center;
-  gap: 24px;
+  flex-direction: column;
+  gap: 16px;
   
-  .category-header {
+  .filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .filter-group {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-    
-    .category-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #303133;
-    }
+    gap: 16px;
   }
   
-  .category-list {
+  .filter-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #303133;
+    min-width: 72px;
+  }
+  
+  .filter-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
   }
   
-  .category-item {
-    padding: 8px 20px;
+  .filter-tag {
+    padding: 6px 18px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 13px;
     color: #606266;
     background: #f4f4f5;
     cursor: pointer;
@@ -278,7 +334,7 @@ watch(() => route.query.keyword, () => {
 }
 
 .sort-select {
-  width: 150px;
+  width: 160px;
 }
 
 .books-grid {
