@@ -13,20 +13,39 @@
       </div>
     </div>
     
-    <!-- 分类筛选 -->
-    <div class="category-section">
-      <div class="category-header">
-        <el-icon :size="20" color="#409eff"><Grid /></el-icon>
-        <span class="category-title">图书分类</span>
+    <!-- 筛选区 -->
+    <div class="filter-section">
+      <div class="filter-group">
+        <div class="filter-header">
+          <el-icon :size="20" color="#409eff"><Grid /></el-icon>
+          <span class="filter-title">图书分类</span>
+        </div>
+        <div class="filter-options">
+          <div
+            v-for="cat in bookStore.categories"
+            :key="cat"
+            :class="['filter-item', { active: activeCategory === cat }]"
+            @click="handleCategoryChange(cat)"
+          >
+            {{ cat }}
+          </div>
+        </div>
       </div>
-      <div class="category-list">
-        <div
-          v-for="cat in bookStore.categories"
-          :key="cat"
-          :class="['category-item', { active: activeCategory === cat }]"
-          @click="handleCategoryChange(cat)"
-        >
-          {{ cat }}
+      
+      <div class="filter-group">
+        <div class="filter-header">
+          <el-icon :size="20" color="#409eff"><PriceTag /></el-icon>
+          <span class="filter-title">价格区间</span>
+        </div>
+        <div class="filter-options">
+          <div
+            v-for="range in priceRanges"
+            :key="range.value"
+            :class="['filter-item', { active: priceRange === range.value }]"
+            @click="handlePriceRangeChange(range.value)"
+          >
+            {{ range.label }}
+          </div>
         </div>
       </div>
     </div>
@@ -43,6 +62,7 @@
         </div>
         <el-select v-model="sortBy" placeholder="排序方式" class="sort-select">
           <el-option label="默认排序" value="default" />
+          <el-option label="评分从高到低" value="rating-desc" />
           <el-option label="价格从低到高" value="price-asc" />
           <el-option label="价格从高到低" value="price-desc" />
           <el-option label="销量优先" value="sales" />
@@ -65,7 +85,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Grid } from '@element-plus/icons-vue'
+import { Grid, PriceTag } from '@element-plus/icons-vue'
 import { useBookStore } from '@/stores/book'
 import BookCard from '@/components/BookCard.vue'
 
@@ -73,12 +93,19 @@ const route = useRoute()
 const bookStore = useBookStore()
 
 const activeCategory = ref('全部')
+const priceRange = ref('all')
 const sortBy = ref('default')
+
+const priceRanges = [
+  { value: 'all', label: '全部价格' },
+  { value: 'below50', label: '50元以下' },
+  { value: 'between50and100', label: '50-100元' },
+  { value: 'above100', label: '100元以上' }
+]
 
 const filteredBooks = computed(() => {
   let books = bookStore.getBooksByCategory(activeCategory.value)
   
-  // 搜索过滤
   const keyword = route.query.keyword
   if (keyword) {
     const lowerKeyword = keyword.toLowerCase()
@@ -89,6 +116,20 @@ const filteredBooks = computed(() => {
     )
   }
   
+  if (priceRange.value !== 'all') {
+    switch (priceRange.value) {
+      case 'below50':
+        books = books.filter(book => book.price < 50)
+        break
+      case 'between50and100':
+        books = books.filter(book => book.price >= 50 && book.price <= 100)
+        break
+      case 'above100':
+        books = books.filter(book => book.price > 100)
+        break
+    }
+  }
+  
   return books
 })
 
@@ -96,6 +137,8 @@ const sortedBooks = computed(() => {
   const books = [...filteredBooks.value]
   
   switch (sortBy.value) {
+    case 'rating-desc':
+      return books.sort((a, b) => b.rating - a.rating)
     case 'price-asc':
       return books.sort((a, b) => a.price - b.price)
     case 'price-desc':
@@ -109,6 +152,10 @@ const sortedBooks = computed(() => {
 
 function handleCategoryChange(category) {
   activeCategory.value = category
+}
+
+function handlePriceRangeChange(range) {
+  priceRange.value = range
 }
 
 watch(() => route.query.keyword, () => {
@@ -184,7 +231,13 @@ watch(() => route.query.keyword, () => {
   }
 }
 
-.category-section {
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filter-group {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -193,26 +246,26 @@ watch(() => route.query.keyword, () => {
   align-items: center;
   gap: 24px;
   
-  .category-header {
+  .filter-header {
     display: flex;
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
     
-    .category-title {
+    .filter-title {
       font-size: 15px;
       font-weight: 600;
       color: #303133;
     }
   }
   
-  .category-list {
+  .filter-options {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
   }
   
-  .category-item {
+  .filter-item {
     padding: 8px 20px;
     border-radius: 20px;
     font-size: 14px;

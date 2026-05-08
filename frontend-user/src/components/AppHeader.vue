@@ -32,11 +32,9 @@
         <div class="search-box">
           <el-input
             v-model="searchKeyword"
-            placeholder="搜索图书..."
+            placeholder="搜索书名/作者..."
             :prefix-icon="Search"
             clearable
-            @keyup.enter="handleSearch"
-            @clear="handleSearch"
           />
         </div>
         
@@ -79,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Search, ShoppingCart, User, ArrowDown, Reading, List, SwitchButton } from '@element-plus/icons-vue'
 import { useCartStore } from '@/stores/cart'
@@ -92,20 +90,38 @@ const cartStore = useCartStore()
 const userStore = useUserStore()
 
 const searchKeyword = ref('')
+let searchTimer = null
 
 const activeMenu = computed(() => {
   return route.path
 })
 
+watch(() => route.query.keyword, (newVal) => {
+  if (newVal !== searchKeyword.value) {
+    searchKeyword.value = newVal || ''
+  }
+}, { immediate: true })
+
+watch(searchKeyword, (newVal) => {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+  }
+  searchTimer = setTimeout(() => {
+    router.push({
+      path: '/',
+      query: newVal ? { keyword: newVal } : {}
+    })
+  }, 300)
+})
+
+onUnmounted(() => {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+  }
+})
+
 function handleMenuSelect(index) {
   router.push(index)
-}
-
-function handleSearch() {
-  router.push({
-    path: '/',
-    query: searchKeyword.value ? { keyword: searchKeyword.value } : {}
-  })
 }
 
 function handleCommand(command) {

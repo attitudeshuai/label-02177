@@ -5,19 +5,33 @@
       <div class="header-actions">
         <el-input
           v-model="searchKeyword"
-          placeholder="搜索图书名称/作者"
+          placeholder="搜索书名/作者"
           :prefix-icon="Search"
           clearable
-          style="width: 240px"
-          @input="handleSearch"
+          style="width: 220px"
         />
-        <el-select v-model="filterCategory" placeholder="分类筛选" clearable style="width: 140px">
+        <el-select v-model="filterCategory" placeholder="分类筛选" clearable style="width: 130px">
           <el-option 
             v-for="cat in bookStore.categories.filter(c => c !== '全部')" 
             :key="cat" 
             :label="cat" 
             :value="cat" 
           />
+        </el-select>
+        <el-select v-model="priceRange" placeholder="价格区间" clearable style="width: 140px">
+          <el-option 
+            v-for="range in priceRanges" 
+            :key="range.value" 
+            :label="range.label" 
+            :value="range.value" 
+          />
+        </el-select>
+        <el-select v-model="sortBy" placeholder="排序" style="width: 140px">
+          <el-option label="默认排序" value="default" />
+          <el-option label="评分从高到低" value="rating-desc" />
+          <el-option label="价格从低到高" value="price-asc" />
+          <el-option label="价格从高到低" value="price-desc" />
+          <el-option label="销量优先" value="sales" />
         </el-select>
       </div>
     </div>
@@ -51,8 +65,13 @@
             <span class="price">¥{{ row.price.toFixed(2) }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="rating" label="评分" width="80" align="center">
+          <template #default="{ row }">
+            <span class="rating">⭐ {{ row.rating }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="stock" label="库存" width="80" align="center" />
-        <el-table-column prop="sales" label="销量" width="80" align="center" sortable />
+        <el-table-column prop="sales" label="销量" width="80" align="center" />
         <el-table-column label="操作" width="160" align="center" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" text @click="goToDetail(row.id)">
@@ -87,13 +106,35 @@ const cartStore = useCartStore()
 
 const searchKeyword = ref('')
 const filterCategory = ref('')
+const priceRange = ref('')
+const sortBy = ref('default')
 const addingId = ref(null)
+
+const priceRanges = [
+  { value: 'below50', label: '50元以下' },
+  { value: 'between50and100', label: '50-100元' },
+  { value: 'above100', label: '100元以上' }
+]
 
 const filteredBooks = computed(() => {
   let books = bookStore.books
   
   if (filterCategory.value) {
     books = books.filter(book => book.category === filterCategory.value)
+  }
+  
+  if (priceRange.value) {
+    switch (priceRange.value) {
+      case 'below50':
+        books = books.filter(book => book.price < 50)
+        break
+      case 'between50and100':
+        books = books.filter(book => book.price >= 50 && book.price <= 100)
+        break
+      case 'above100':
+        books = books.filter(book => book.price > 100)
+        break
+    }
   }
   
   if (searchKeyword.value) {
@@ -105,12 +146,27 @@ const filteredBooks = computed(() => {
     )
   }
   
+  if (sortBy.value !== 'default') {
+    const sorted = [...books]
+    switch (sortBy.value) {
+      case 'rating-desc':
+        sorted.sort((a, b) => b.rating - a.rating)
+        break
+      case 'price-asc':
+        sorted.sort((a, b) => a.price - b.price)
+        break
+      case 'price-desc':
+        sorted.sort((a, b) => b.price - a.price)
+        break
+      case 'sales':
+        sorted.sort((a, b) => b.sales - a.sales)
+        break
+    }
+    books = sorted
+  }
+  
   return books
 })
-
-function handleSearch() {
-  // 搜索由 computed 自动处理
-}
 
 function goToDetail(id) {
   router.push(`/book/${id}`)
@@ -181,5 +237,10 @@ async function handleAddToCart(book) {
 .price {
   color: #f56c6c;
   font-weight: 600;
+}
+
+.rating {
+  color: #f7ba2a;
+  font-weight: 500;
 }
 </style>
