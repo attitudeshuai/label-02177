@@ -19,7 +19,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '中国古典四大名著之首，以贾宝玉、林黛玉、薛宝钗的爱情婚姻故事为主线，描绘了封建社会末期的人情世态。',
       stock: 8,
-      sales: 156
+      sales: 156,
+      rating: 4.8
     },
     {
       id: 2,
@@ -31,7 +32,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '中国古典四大名著之一，讲述唐僧师徒四人西天取经的神话故事。',
       stock: 6,
-      sales: 203
+      sales: 203,
+      rating: 4.9
     },
     {
       id: 3,
@@ -43,7 +45,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '中国古典四大名著之一，描写了东汉末年到西晋初年之间近百年的历史风云。',
       stock: 5,
-      sales: 189
+      sales: 189,
+      rating: 4.7
     },
     {
       id: 4,
@@ -55,7 +58,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '中国古典四大名著之一，讲述了北宋末年以宋江为首的108位好汉的故事。',
       stock: 4,
-      sales: 145
+      sales: 145,
+      rating: 4.6
     },
     {
       id: 5,
@@ -67,7 +71,8 @@ export const useBookStore = defineStore('book', () => {
       category: '科幻',
       description: '哈利波特系列第一部，讲述了一个男孩发现自己是巫师并进入霍格沃茨魔法学校的故事。',
       stock: 10,
-      sales: 567
+      sales: 567,
+      rating: 4.9
     },
     {
       id: 6,
@@ -79,7 +84,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '法国作家圣埃克苏佩里的经典童话，讲述了小王子从自己星球出发前往地球的旅程。',
       stock: 12,
-      sales: 892
+      sales: 892,
+      rating: 4.8
     },
     {
       id: 7,
@@ -91,7 +97,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '反乌托邦小说经典之作，描绘了一个极权主义统治下的恐怖社会。',
       stock: 6,
-      sales: 234
+      sales: 234,
+      rating: 4.7
     },
     {
       id: 8,
@@ -103,7 +110,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '英国文学史上最受欢迎的小说之一，讲述了伊丽莎白与达西的爱情故事。',
       stock: 8,
-      sales: 178
+      sales: 178,
+      rating: 4.6
     },
     {
       id: 9,
@@ -115,7 +123,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '海明威最著名的作品，讲述了一位老渔夫与大马林鱼搏斗的故事。',
       stock: 5,
-      sales: 312
+      sales: 312,
+      rating: 4.5
     },
     {
       id: 10,
@@ -127,7 +136,8 @@ export const useBookStore = defineStore('book', () => {
       category: '文学小说',
       description: '魔幻现实主义文学的代表作，描写了布恩迪亚家族七代人的传奇故事。',
       stock: 4,
-      sales: 456
+      sales: 456,
+      rating: 4.8
     }
   ])
 
