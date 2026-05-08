@@ -35,8 +35,7 @@
             placeholder="搜索图书..."
             :prefix-icon="Search"
             clearable
-            @keyup.enter="handleSearch"
-            @clear="handleSearch"
+            @clear="handleClear"
           />
         </div>
         
@@ -79,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Search, ShoppingCart, User, ArrowDown, Reading, List, SwitchButton } from '@element-plus/icons-vue'
 import { useCartStore } from '@/stores/cart'
@@ -92,6 +91,7 @@ const cartStore = useCartStore()
 const userStore = useUserStore()
 
 const searchKeyword = ref('')
+let debounceTimer = null
 
 const activeMenu = computed(() => {
   return route.path
@@ -101,11 +101,19 @@ function handleMenuSelect(index) {
   router.push(index)
 }
 
-function handleSearch() {
-  router.push({
-    path: '/',
-    query: searchKeyword.value ? { keyword: searchKeyword.value } : {}
-  })
+watch(searchKeyword, (val) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    router.push({
+      path: '/',
+      query: val ? { keyword: val } : {}
+    })
+  }, 300)
+})
+
+function handleClear() {
+  clearTimeout(debounceTimer)
+  router.push({ path: '/', query: {} })
 }
 
 function handleCommand(command) {
